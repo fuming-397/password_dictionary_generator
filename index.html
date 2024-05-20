@@ -158,7 +158,7 @@
             <div class="copy_btn">复&nbsp;制</div>
         </div>
         <!-- 版本号&版权 -->
-        <div class="version">加密库生成器Demo Ver2.0.2</div>
+        <div class="version">加密库生成器Demo Ver2.0.3</div>
         <div class="copyright"></div>
         <!-- <div class="copyright">Copyright © 2024 Tang . All Rights Reserved</div> -->
     </body>
@@ -167,10 +167,12 @@
         document.querySelector('.copyright').innerHTML = "Copyright © "+new Date().getFullYear()+" Tang . All Rights Reserved";
         // 加密库生成器
         const string_arr = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","!","@","#","$","%","^","&","*","(",")","_","+","-","=","{","}","[","]","\\","/","<",">","?",",",".","|",";",":","1","2","3","4","5","6","7","8","9","0"];
+        // 
         function get_random_string(){
             let len_temp = string_arr.length;
             return string_arr[parseInt(Math.random()*len_temp)];
         }
+        // 
         function get_random_arr(){
             let random_arr_temp = [];
             for (let i = 0; i < 124;) {
@@ -191,33 +193,15 @@
             }
             return random_arr_temp;
         }
+        // 
         function get_random_arr_str(){
             let random_arr_temp = get_random_arr();
             // 创建一个副本避免修改原始数组
             let random_arr_temp_use = random_arr_temp.slice();
-            let result_arr_temp_1 = [];
-            let result_arr_temp_2 = [];
-            let random_num_temp = 0;
-            for (let i = 0; i < parseInt(random_arr_temp.length/2); i++) {
-                random_num_temp = parseInt(Math.random()*(random_arr_temp_use.length/2));
-                try {
-                    result_arr_temp_1[i] = random_arr_temp_use[random_num_temp];
-                } catch (err) {
-                    console.error(err);
-                }
-            }
-            for (let i = parseInt(random_arr_temp.length/2); i < random_arr_temp.length; i++) {
-                random_num_temp = parseInt(Math.random()*(random_arr_temp_use.length/2)+(random_arr_temp_use.length/2));
-                try {
-                    result_arr_temp_2[i-parseInt(random_arr_temp.length/2)] = random_arr_temp_use[random_num_temp];
-                } catch (err) {
-                    console.log(err);
-                }
-            }
             let result_arr_temp = Array.from({length:parseInt(random_arr_temp.length/2)},()=>[]);
-            for (let i = 0; i < parseInt(random_arr_temp.length/2); i++) {
-                result_arr_temp[i][0] = result_arr_temp_1[i];
-                result_arr_temp[i][1] = result_arr_temp_2[i];
+            for (let i = 0; i < random_arr_temp.length/2; i++) {
+                result_arr_temp[i][0] = random_arr_temp_use[i];
+                result_arr_temp[i][1] = random_arr_temp_use[i+parseInt(random_arr_temp.length/2)];
             }
             return result_arr_temp;
         }
@@ -226,6 +210,33 @@
             document.querySelector('.code_value').value = "";
             let encrypt_str = JSON.stringify(get_random_arr_str());
             document.querySelector('.code_value').value = encrypt_str;
+
+            // 查重检测
+            console.log(encrypt_str);
+            encrypt_str = JSON.parse(encrypt_str);
+            let test_1 = 0;
+            for (let i = 0; i < encrypt_str.length; i++) {
+                for (let j = 0; j < encrypt_str.length; j++) {
+                    if (i==j) {
+                        continue;
+                    }
+                    if (encrypt_str[i][0]==encrypt_str[j][0]||encrypt_str[i][0]==encrypt_str[j][1]) {
+                        test_1++;
+                        console.log('['+i+'] = ['+encrypt_str[i][0]+','+encrypt_str[i][1]+'] -------- ['+j+'] = ['+encrypt_str[j][0]+','+encrypt_str[j][1]+']');
+                    }
+                }
+                for (let j = 0; j < encrypt_str.length; j++) {
+                    if (i==j) {
+                        continue;
+                    }
+                    if (encrypt_str[i][1]==encrypt_str[j][0]||encrypt_str[i][1]==encrypt_str[j][1]) {
+                        test_1++;
+                        console.log('['+i+'] = ['+encrypt_str[i][0]+','+encrypt_str[i][1]+'] -------- ['+j+'] = ['+encrypt_str[j][0]+','+encrypt_str[j][1]+']');
+                    }
+                }
+            }
+            console.log(test_1);
+
         });
         // 复制到剪切板
         let time_lock = false;
